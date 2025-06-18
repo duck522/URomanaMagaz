@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Магазин одежды</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <header>
+    <h1>Магазин одежды "У Романа"</h1>
+    <div class="marquee">
+      <span>🔥 Скидки до 30% на новую коллекцию! Только этой весной! 🔥</span>
+    </div>
+  </header>
+
+  <nav>
+    <a href="javascript:void(0);" onclick="showPage('home')">Главная</a>
+    <a href="javascript:void(0);" onclick="showPage('catalog')">Каталог</a>
+    <a href="javascript:void(0);" onclick="showPage('cart')">Корзина</a>
+    <a href="javascript:void(0);" onclick="showPage('auth')">Вход / Регистрация</a>
+    <a href="javascript:void(0);" onclick="showPage('checkout')">Оформить заказ</a>
+    <a href="javascript:void(0);" onclick="showPage('contact')">Связаться с нами</a>
+  </nav>
+
+  <!-- Главная страница с информацией -->
+  <div class="page" id="home">
+    <h2>Добро пожаловать в наш магазин одежды "У Романа"!</h2>
+    <p>У нас вы найдете качественную и стильную одежду по доступным ценам.</p>
+    <p>Мы предлагаем футболки, платья, куртки и многое другое для любого сезона и случая.</p>
+    <p>Покупайте с удовольствием и оформляйте заказы быстро и удобно.</p>
+    <video width="100%" controls style="margin-top: 20px; border-radius: 10px;">
+      <source src="Рекламный ролик для магазина мужской одежды _URBANMAG_ в Караганде.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+  </div>
+
+  <div class="controls page" id="controls">
+    <input type="text" id="search" placeholder="Поиск товара..." />
+    <select id="filter">
+      <option value="all">Все</option>
+      <option value="shirts">Футболки</option>
+      <option value="dresses">Платья</option>
+      <option value="jackets">Куртки</option>
+    </select>
+  </div>
+
+  <!-- Каталог -->
+  <section class="products page" id="catalog"></section>
+
+  <!-- Корзина -->
+  <div class="cart page" id="cart">
+    <h2>Корзина</h2>
+    <ul id="cart-items"></ul>
+    <p><strong>Итого: <span id="total">0</span> ₽</strong></p>
+    <button onclick="showPage('checkout')">Перейти к оформлению заказа</button>
+  </div>
+
+  <!-- Оформить заказ -->
+  <div class="page" id="checkout">
+    <h2>Оформление заказа</h2>
+    <p>Ваши товары:</p>
+    <ul id="checkout-items"></ul>
+    <p><strong>Итого: <span id="checkout-total">0</span> ₽</strong></p>
+    <form>
+      <input type="text" placeholder="Ваше имя" required />
+      <input type="email" placeholder="Ваш email" required />
+      <input type="tel" placeholder="Ваш телефон" required />
+      <button type="submit">Оформить заказ</button>
+    </form>
+  </div>
+
+  <div class="auth-form page" id="auth">
+    <h2>Регистрация / Вход</h2>
+    <input type="text" placeholder="Имя пользователя" />
+    <input type="password" placeholder="Пароль" />
+    <button>Войти</button>
+  </div>
+
+  <div class="page" id="contact">
+    <h2>Связаться с нами</h2>
+    <p>Пишите нам на почту: <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSHwCwSHWFxpSGjgPXHTfxKPMPqjwmtsVrckKmnTBxJCHsmGSmVxWFqrzxKPbhsfFqZXpQCN">urromana367@gmail.com</a></p>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Магазин одежды "StyleMarket". Все права защищены.</p>
+  </footer>
+
+  <script>
+    const products = [
+      { id: 1, name: "Футболка мужская DUNA", price: 999, category: "shirts", img: "Мужская футболка DUNA.jpg" },
+      { id: 2, name: "Летнее платье Choupette", price: 1499, category: "dresses", img: "Летнее платье.jpg" },
+      { id: 3, name: "Зимняя куртка", price: 3499, category: "jackets", img: "Зимняя куртка.jpg" },
+      { id: 4, name: "Худи оверсайз Outshine", price: 1899, category: "shirts", img: "Худи оверсайз Outshine.jpg" },
+      { id: 5, name: "Футболка оверсайз Читсая соль", price: 1799, category: "shirts", img: "Футболка оверсайз Читсая соль.jpg" },
+      { id: 6, name: "Зимняя крутка H & V - EXTREME.", price: 2499, category: "jackets", img: "Зимняя крутка H & V - EXTREME.jpg" },
+    ];
+
+    const productList = document.getElementById("catalog");
+    const searchInput = document.getElementById("search");
+    const filterSelect = document.getElementById("filter");
+    const cartItems = document.getElementById("cart-items");
+    const totalDisplay = document.getElementById("total");
+    const checkoutItems = document.getElementById("checkout-items");
+    const checkoutTotalDisplay = document.getElementById("checkout-total");
+    let cart = [];
+
+    function displayProducts() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filter = filterSelect.value;
+      productList.innerHTML = "";
+
+      products.filter(p =>
+        (filter === "all" || p.category === filter) &&
+        p.name.toLowerCase().includes(searchTerm)
+      ).forEach(p => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <p>Цена: ${p.price} ₽</p>
+          <button onclick="addToCart(${p.id})">Купить</button>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      updateCart();
+    }
+
+    function updateCart() {
+      cartItems.innerHTML = "";
+      let total = 0;
+      cart.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} - ${item.price} ₽`;
+        cartItems.appendChild(li);
+        total += item.price;
+      });
+      totalDisplay.textContent = total;
+
+      // Для оформления заказа
+      checkoutItems.innerHTML = "";
+      cart.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} - ${item.price} ₽`;
+        checkoutItems.appendChild(li);
+      });
+      checkoutTotalDisplay.textContent = total;
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => {
+        page.style.display = 'none';
+      });
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) targetPage.style.display = 'block';
+
+      // Отображаем элементы управления и каталог при показе каталога
+      if (pageId === 'catalog') {
+        document.getElementById('controls').style.display = 'flex';
+        displayProducts();
+      } else {
+        document.getElementById('controls').style.display = 'none';
+      }
+    }
+
+    searchInput.addEventListener("input", displayProducts);
+    filterSelect.addEventListener("change", displayProducts);
+
+    // Изначально показать главную страницу
+    showPage('home');
+  </script>
+</body>
+</html>
